@@ -1,0 +1,51 @@
+@model Bloggie.Web.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Ideas for curious developers";
+}
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <span class="eyebrow"><span class="status-dot"></span> THE DEVELOPER'S JOURNAL</span>
+            <h1>Good ideas.<br />Great stories.<br /><em>Better together.</em></h1>
+            <p>A space for curious minds and people who build. Explore fresh perspectives on code, craft, and everything in between.</p>
+            <a class="btn btn-primary btn-lg" href="#stories">Find your next read <span aria-hidden="true">↗</span></a>
+            <div class="hero-note"><span class="note-line"></span> Made for developers. Driven by curiosity.</div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+            <span class="art-spark">✳</span>
+            <div class="code-window">
+                <div class="window-bar"><span></span><span></span><span></span><small>ideas.cs</small></div>
+                <div class="code-lines"><span class="code-muted">// One idea can start something.</span><br /><span class="code-orange">while</span> (curiosity) {<br />&nbsp;&nbsp;learn();<br />&nbsp;&nbsp;build();<br />&nbsp;&nbsp;<span class="code-orange">share</span>();<br />}</div>
+                <div class="window-footer"><span class="status-dot"></span> Always a work in progress</div>
+            </div>
+            <div class="art-label"><span>↗</span><div>Stay curious.<small>There's more to discover.</small></div></div>
+            <span class="art-caption">THINK. BUILD. WRITE. REPEAT.</span>
+        </div>
+    </div>
+</section>
+<section class="stories-section container" id="stories">
+    <div class="section-heading"><div><span class="eyebrow">THE BLOG</span><h2>Fresh perspectives</h2></div><p>Something new for your next breakthrough.</p></div>
+    @if (Model?.Tags?.Any() == true)
+    {
+        <div class="topic-strip"><span class="topic-label">On the radar</span><div class="tag-list">
+        @foreach (var tagsitems in Model.Tags)
+        {
+            <span class="badge topic-badge">@tagsitems.Name</span>
+        }
+        </div></div>
+    }
+    @if (Model?.BlogPosts?.Any() == true)
+    {
+        <div class="blog-grid">
+            @foreach (var blogposts in Model.BlogPosts)
+            {
+                <partial name="_BlogCard" model="blogposts" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state"><span class="empty-icon" aria-hidden="true">✎</span><h3>The next great story starts here.</h3><p>No posts have been published yet. Come back soon for fresh ideas.</p></div>
+    }
+</section>

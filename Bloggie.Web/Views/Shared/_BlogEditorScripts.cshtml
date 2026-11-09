@@ -1,0 +1,38 @@
+<script src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
+<script>
+    if (document.getElementById('content') && typeof FroalaEditor !== 'undefined') {
+        new FroalaEditor('#content', { imageUploadURL: '/api/Images' });
+    }
+    const featuredUploadElement = document.getElementById('featuredImageUpload');
+    const featuredImageUrlElemet = document.getElementById('featuredImageUrl');
+    const featuredImageDisplayElement = document.getElementById('featuredImageDisplay');
+    const uploadStatus = document.getElementById('uploadStatus');
+
+    async function uploadFeaturedImage(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const data = new FormData();
+        data.append('file', file);
+        featuredUploadElement.disabled = true;
+        featuredUploadElement.setAttribute('aria-busy', 'true');
+        uploadStatus.textContent = 'Uploading image…';
+        try {
+            const response = await fetch('/api/images', {
+                method: 'POST', headers: { 'Accept': '*/*' }, body: data
+            });
+            if (!response.ok) throw new Error('Upload failed');
+            const result = await response.json();
+            if (!result.link) throw new Error('Image URL missing');
+            featuredImageUrlElemet.value = result.link;
+            featuredImageDisplayElement.src = result.link;
+            featuredImageDisplayElement.style.display = 'block';
+            uploadStatus.textContent = 'Image uploaded and ready.';
+        } catch {
+            uploadStatus.textContent = 'The image could not be uploaded. Please try again.';
+        } finally {
+            featuredUploadElement.disabled = false;
+            featuredUploadElement.removeAttribute('aria-busy');
+        }
+    }
+    featuredUploadElement?.addEventListener('change', uploadFeaturedImage);
+</script>

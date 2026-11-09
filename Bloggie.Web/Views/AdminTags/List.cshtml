@@ -1,0 +1,147 @@
+@model List<Bloggie.Web.Models.Domain.Tags>
+
+@{
+    ViewData["Title"] = "Show Tags";
+
+    int pageNext = Convert.ToInt32(ViewBag.pageNumber) + 1;
+    int pagePrev = Convert.ToInt32(ViewBag.pageNumber) - 1;
+}
+
+<div class="page-banner">
+    <div class="container">
+        <div><span class="eyebrow">YOUR WORKSPACE</span><h1>Organize your topics</h1><p>Keep your stories connected with clear, easy-to-find tags.</p></div><a class="btn btn-primary" asp-controller="AdminTags" asp-action="Add">Create a tag <span aria-hidden="true">+</span></a>
+    </div>
+</div>
+
+<form method="get" asp-controller="AdminTags" asp-action="List">
+        <div class="container">
+        <div class="search-toolbar">
+            <input type="search" class="form-control" name="searchQuery" value="@ViewBag.searchQuery" aria-label="Search tags" placeholder="Search your tags…" />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+<div class="container mt-3 pb-5">
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive" role="region" aria-label="Manage records" tabindex="0"><table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>
+                        Name
+                        <span>
+                            <span>
+                                <a class="btn btn-light" asp-controller="AdminTags" asp-action="List"
+                                   asp-route-sortBy="Name"
+                                   asp-route-sortDirection="Asc"
+                                   asp-route-searchQuery="@ViewBag.searchQuery"
+                                   asp-route-pageNumber="@ViewBag.pageNumber"
+                                   asp-route-pageSize="@ViewBag.pageSize">
+                                    <i class="bi bi-arrow-up" aria-hidden="true"></i><span class="visually-hidden">Sort ascending</span>
+                                </a>
+                            </span>
+                        </span>
+                        <span>
+                            <span>
+                                <a class="btn btn-light" asp-controller="AdminTags" asp-action="List"
+                                   asp-route-sortBy="Name"
+                                   asp-route-sortDirection="Desc"
+                                   asp-route-searchQuery="@ViewBag.searchQuery"
+                                   asp-route-pageNumber="@ViewBag.pageNumber"
+                                   asp-route-pageSize="@ViewBag.pageSize">
+                                    <i class="bi bi-arrow-down" aria-hidden="true"></i><span class="visually-hidden">Sort descending</span>
+                                </a>
+                            </span>
+                        </span>
+                    </th>
+                    <th>
+                        Display Name
+                        <span>
+                            <span>
+                                <a class="btn btn-light" asp-controller="AdminTags" asp-action="List"
+                                   asp-route-sortBy="DisplayName"
+                                   asp-route-sortDirection="Asc"
+                                   asp-route-searchQuery="@ViewBag.searchQuery"
+                                   asp-route-pageNumber="@ViewBag.pageNumber"
+                                   asp-route-pageSize="@ViewBag.pageSize">
+                                    <i class="bi bi-arrow-up" aria-hidden="true"></i><span class="visually-hidden">Sort ascending</span>
+                                </a>
+                            </span>
+                        </span>
+                        <span>
+                            <span>
+                                <a class="btn btn-light" asp-controller="AdminTags" asp-action="List"
+                                   asp-route-sortBy="DisplayName"
+                                   asp-route-sortDirection="Desc"
+                                   asp-route-searchQuery="@ViewBag.searchQuery"
+                                   asp-route-pageNumber="@ViewBag.pageNumber"
+                                   asp-route-pageSize="@ViewBag.pageSize">
+                                    <i class="bi bi-arrow-down" aria-hidden="true"></i><span class="visually-hidden">Sort descending</span>
+                                </a>
+                            </span>
+                        </span>
+                    </th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.DisplayName</td>
+                        <td>
+                            <a class="btn btn-warning" asp-controller="AdminTags" asp-action="Edit"
+                               asp-route-Id="@item.Id">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table></div>
+
+        <nav aria-label="Tag pages">
+            <ul class="pagination">
+
+                <li class="page-item @(Convert.ToInt32(ViewBag.pageNumber) <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-controller="AdminTags" asp-action="List"
+                       asp-route-searchQuery="@ViewBag.searchQuery"
+                       asp-route-pageNumber="@pagePrev" aria-disabled="@(Convert.ToInt32(ViewBag.pageNumber) <= 1 ? "true" : "false")" tabindex="@(Convert.ToInt32(ViewBag.pageNumber) <= 1 ? -1 : 0)" 
+                       asp-route-pageSize="@ViewBag.pageSize"
+                       asp-route-sortBy="@ViewBag.sortBy"
+                       asp-route-sortDirection="@ViewBag.sortDirection">Previous</a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.totalPages; i++)
+                {
+                    <li class="page-item @(i == Convert.ToInt32(ViewBag.pageNumber) ? "active" : "")">
+                        <a class="page-link" asp-controller="AdminTags" asp-action="List"
+                           asp-route-searchQuery="@ViewBag.searchQuery"
+                           asp-route-pageNumber="@i" aria-current="@(i == Convert.ToInt32(ViewBag.pageNumber) ? "page" : null)" 
+                           asp-route-pageSize="@ViewBag.pageSize"
+                           asp-route-sortBy="@ViewBag.sortBy"
+                           asp-route-sortDirection="@ViewBag.sortDirection">
+                        @i</a>
+                    </li>
+                }
+                <li class="page-item @(Convert.ToInt32(ViewBag.pageNumber) >= Convert.ToInt32(ViewBag.totalPages) ? "disabled" : "")">
+                    <a class="page-link" asp-controller="AdminTags" asp-action="List"
+                       asp-route-searchQuery="@ViewBag.searchQuery"
+                       asp-route-pageNumber="@pageNext" aria-disabled="@(Convert.ToInt32(ViewBag.pageNumber) >= Convert.ToInt32(ViewBag.totalPages) ? "true" : "false")" tabindex="@(Convert.ToInt32(ViewBag.pageNumber) >= Convert.ToInt32(ViewBag.totalPages) ? -1 : 0)" 
+                       asp-route-pageSize="@ViewBag.pageSize"
+                       asp-route-sortBy="@ViewBag.sortBy"
+                       asp-route-sortDirection="@ViewBag.sortDirection">
+                       Next</a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div class="empty-state"><span class="empty-icon" aria-hidden="true">#</span><h3>No matching tags</h3><p>Try another search or create a new topic for your stories.</p><a class="btn btn-primary" asp-controller="AdminTags" asp-action="Add">Create a tag</a></div>
+    }
+</div>

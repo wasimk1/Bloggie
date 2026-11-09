@@ -1,0 +1,101 @@
+@model Bloggie.Web.Models.ViewModels.EditBlogPostRequest
+
+@{
+    ViewData["Title"] = "Edit Blog Post";
+}
+
+<div class="page-banner">
+    <div class="container">
+        <div><span class="eyebrow">YOUR WORKSPACE</span><h1>Refine your story</h1><p>Make every detail count.</p></div>
+    </div>
+</div>
+
+    <div class="container admin-content">
+        @if(Model is not null)
+        {
+            <form method="post" class="form-surface"><div asp-validation-summary="ModelOnly" role="alert"></div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="heading">Id</label>
+                    <input class="form-control" type="text" asp-for="Id" id="heading" readonly/>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="heading">Heading</label>
+                    <input class="form-control" type="text" asp-for="Heading" id="heading" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="pageTitle">Page Title</label>
+                    <input class="form-control" type="text" asp-for="PageTitle" id="pageTitle" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="content">Content</label>
+                    <textarea class="form-control" asp-for="Content" id="content"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="shortDescription">Short Description</label>
+                    <input class="form-control" type="text" asp-for="ShortDescription" id="shortDescription" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="featuredImageUpload">Featured Image Upload</label>
+                    <input class="form-control" type="file" id="featuredImageUpload" aria-describedby="uploadStatus" /><div id="uploadStatus" class="form-text" role="status"></div>
+                    @if (Model.FeaturedImageUrl != null)
+                    {
+                        <img src="@Model.FeaturedImageUrl" width="300px" style="display:block;" id="featuredImageDisplay" alt="Featured image preview" />
+                    }
+                    else
+                    {
+                        <img src="" width="300px" style="display:none;" id="featuredImageDisplay" alt="Featured image preview" />
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="featuredImageUrl">Featured Image Url</label>
+                    <input class="form-control" type="text" asp-for="FeaturedImageUrl" id="featuredImageUrl" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="urlHandle">URL handle</label>
+                    <input class="form-control" type="text" asp-for="UrlHandle" id="urlHandle" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="publishDate">Publish Date</label>
+                    <input class="form-control" type="date" asp-for="PublishDate" id="publishDate" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="author">Author</label>
+                    <input class="form-control" type="text" asp-for="Author" id="author" />
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="Visible" asp-for="Visible">
+                    <label class="form-check-label" for="Visible"> Visible to readers </label>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="SelectedTags">Tags</label>
+                    <select aria-describedby="tags-help" class="form-select" asp-items="@Model.Tags" asp-for="SelectedTags">
+                    </select><div class="form-text" id="tags-help">Choose one or more topics. Hold Ctrl on Windows or Command on Mac to select multiple tags.</div>
+                </div>
+
+                <div class="form-actions">
+                    <div class="d-flex">
+                    <button type="submit" class="btn btn-primary me-1">Update Blog Post</button>
+                    <button type="submit" class="btn btn-danger" asp-controller="AdminBlogPosts" asp-action="Delete" asp-route-id="@Model.Id">
+                    Delete</button>
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+        <div class="empty-state"><h2>Story not found</h2><p>This post is no longer available.</p><a class="btn btn-primary" asp-controller="AdminBlogPosts" asp-action="List">Back to stories</a></div>    
+        }
+    </div>
+    @section Scripts { <partial name="_BlogEditorScripts" /> }

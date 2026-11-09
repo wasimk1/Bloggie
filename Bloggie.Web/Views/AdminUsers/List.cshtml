@@ -1,0 +1,113 @@
+@model Bloggie.Web.Models.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "All User";
+}
+<div class="page-banner">
+    <div class="container">
+        <h1>Your community</h1>
+    </div>
+</div>
+<div class="container admin-content">
+
+    <div class="mb-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCreateUser">
+            Create User
+        </button>
+    </div>
+
+
+    @if (Model.users is not null && Model.users.Any())
+    {
+        <div class="mt-3">
+            <div class="table-responsive" role="region" aria-label="Manage records" tabindex="0"><table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var user in Model.users)
+                    {
+                        <tr>
+                            <td>@user.Id</td>
+                            <td>@user.Username</td>
+                            <td>@user.EmailAddress</td>
+                            <td>
+                                <form method="post">
+                                    <button type="submit" class="btn btn-outline-danger" 
+                                    asp-controller="AdminUsers" 
+                                    asp-action="Delete" 
+                                    asp-route-id="@user.Id">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table></div>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state"><h3>No users to show</h3><p>Create a user to grow your community.</p></div>
+    }
+
+</div>
+
+
+<!-- Modal -->
+<form method="post">
+    <div class="modal fade" id="modalCreateUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create New User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-label">
+                        <label class="form-label" for="Username">Username</label>
+                        <input type="text" class="form-control" asp-for="Username"/>
+                    </div>
+
+                    <div class="form-label">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" asp-for="email" />
+                    </div>
+
+                    <div class="form-label">
+                        <label class="form-label" for="Password">Password</label>
+                        <input type="password" class="form-control" asp-for="Password" />
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" value="User" id="chkUserRole" checked disabled />
+                            <label class="form-check-label" for="chkUserRole">User Role</label>
+                        </div>
+
+                        @if (User.IsInRole("SuperAdmin"))
+                        {
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="chkAdminRole" asp-for="AdminRoleChkBox" />
+                                <label class="form-check-label" for="chkAdminRole">Admin Role</label>
+                            </div>
+                        }
+                        
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" asp-controller="AdminUsers" asp-action="List" >Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,138 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> signInManger
+@inject UserManager<IdentityUser> usermanager
+@model Bloggie.Web.Models.ViewModels.BlogDetailsViewModel
+@{
+    ViewData["Title"] = Model?.PageTitle ?? "Story not found";
+}
+<div class="container article-shell">
+    <a class="article-back" asp-controller="Home" asp-action="Index" asp-fragment="stories"><span aria-hidden="true">←</span> Back to stories</a>
+    @if (Model is not null)
+    {
+        <article>
+            <header class="article-header">
+                <div class="tag-list">
+                    @foreach (var tags in Model.Tags)
+                    {
+                        <span class="badge">@tags.Name</span>
+                    }
+                </div>
+                <h1>@Model.Heading</h1>
+                @if (!string.IsNullOrWhiteSpace(Model.ShortDescription))
+                {
+                    <p class="article-deck">@Model.ShortDescription</p>
+                }
+                <div class="article-meta">
+                    <div class="article-author"><span class="author-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(Model.Author) ? "B" : Model.Author.Substring(0, 1).ToUpperInvariant())</span><div><strong>@Model.Author</strong><time datetime="@Model.PublishDate.ToString("yyyy-MM-dd")">@Model.PublishDate.ToString("MMMM dd, yyyy")</time></div></div>
+                    <div class="article-reactions">
+                        @if (signInManger.IsSignedIn(User))
+                        {
+                            if (Model.Liked)
+                            {
+                                <button type="button" class="like-button" aria-label="You liked this story" disabled><i class="bi bi-hand-thumbs-up-fill" aria-hidden="true"></i></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="like-button" id="btnLike" aria-label="Like this story"><i class="bi bi-hand-thumbs-up" aria-hidden="true"></i></button>
+                            }
+                        }
+                        <span><span id="totalshowlikes" aria-live="polite">@Model.TotalLIkes</span> likes</span>
+                        <a class="article-comment-link" href="#comments-title">Join the discussion <span aria-hidden="true">↓</span></a>
+                    </div>
+                </div>
+                <p class="text-danger mt-2" id="likeStatus" role="status"></p>
+            </header>
+            @if (!string.IsNullOrWhiteSpace(Model.FeaturedImageUrl))
+            {
+                <img class="article-cover" src="@Model.FeaturedImageUrl" alt="@Model.Heading" data-image-fallback />
+            }
+            <div class="blog-details-content">@Html.Raw(Model.Content)</div>
+        </article>
+        <section class="comments-panel" aria-labelledby="comments-title">
+            <span class="eyebrow">CONTINUE THE CONVERSATION</span>
+            <h2 id="comments-title">Thoughts &amp; perspectives</h2>
+            @if (signInManger.IsSignedIn(User))
+            {
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label" for="commentdescriptionbox">Add your comment</label>
+                        <textarea class="form-control" asp-for="CommentDescription" id="commentdescriptionbox" rows="3" placeholder="What stood out to you? Share a thought or ask a question…" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary" type="submit" id="btnSubmitComment" disabled>Post comment <span aria-hidden="true">↗</span></button>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="UrlHandle" />
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="article-signin"><div><strong>Good stories start conversations.</strong><p>Sign in to leave a little appreciation or share your perspective.</p></div><a class="btn btn-primary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString">Join the conversation <span aria-hidden="true">↗</span></a></div>
+            }
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                @foreach (var comments in Model.Comments)
+                {
+                    <div class="comment-card">
+                        <div class="comment-meta"><strong>@comments.Username</strong><time datetime="@comments.DateAdded.ToString("yyyy-MM-dd")">@comments.DateAdded.ToString("MMM dd, yyyy")</time></div>
+                        <div class="comment-text">@comments.Description</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted mt-4">No comments yet. Be the first to share a thought.</p>
+            }
+        </section>
+    }
+    else
+    {
+        <div class="empty-state"><span class="empty-icon" aria-hidden="true">?</span><h1>Story not found.</h1><p>This story is no longer available. There are more ideas to explore back on the blog.</p><a class="btn btn-primary" asp-controller="Home" asp-action="Index">Explore stories</a></div>
+    }
+</div>
+@section Scripts {
+    @if (Model is not null)
+    {
+        <script>
+            const btnLikeElement = document.getElementById('btnLike');
+            const totaldiplaylike = document.getElementById('totalshowlikes');
+            const commentbox = document.getElementById('commentdescriptionbox');
+            const btnComment = document.getElementById('btnSubmitComment');
+            const likeStatus = document.getElementById('likeStatus');
+
+            async function getTotalLikes() {
+                const response = await fetch('/api/BlogPostLikes/@Model.Id/totallikes', {
+                    method: 'GET', headers: { 'Content-Type': 'application/json', 'Accept': '*/*' }
+                });
+                if (response.ok) totaldiplaylike.textContent = await response.json();
+            }
+            async function addLikeforBlog() {
+                btnLikeElement.disabled = true;
+                btnLikeElement.setAttribute('aria-busy', 'true');
+                likeStatus.textContent = '';
+                try {
+                    const response = await fetch('/api/BlogPostLIkes/Add', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': '*/*' },
+                        body: JSON.stringify({ BlogPostId: '@Model.Id', UserId: '@usermanager.GetUserId(User)' })
+                    });
+                    if (!response.ok) throw new Error('Like failed');
+                    btnLikeElement.innerHTML = '<i class="bi bi-hand-thumbs-up-fill" aria-hidden="true"></i>';
+                    btnLikeElement.setAttribute('aria-label', 'You liked this story');
+                    btnLikeElement.removeEventListener('click', addLikeforBlog);
+                } catch {
+                    likeStatus.textContent = 'Your like could not be saved. Please try again.';
+                    btnLikeElement.disabled = false;
+                    return;
+                } finally {
+                    btnLikeElement.removeAttribute('aria-busy');
+                }
+                try { await getTotalLikes(); }
+                catch { likeStatus.textContent = 'Like saved. Refresh the page to see the updated count.'; }
+            }
+            btnLikeElement?.addEventListener('click', addLikeforBlog);
+            function restrictCommentBtn() { if (btnComment && commentbox) btnComment.disabled = commentbox.value.trim() === ''; }
+            commentbox?.addEventListener('input', restrictCommentBtn);
+            restrictCommentBtn();
+        </script>
+    }
+}

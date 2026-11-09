@@ -1,0 +1,25 @@
+@model Bloggie.Web.Models.Domain.BlogPost
+<article class="blog-card">
+    <a class="blog-card-image" asp-controller="Blogs" asp-area="" asp-action="Index" asp-route-urlHandle="@Model.UrlHandle" aria-label="Read @Model.Heading">
+        @if (!string.IsNullOrWhiteSpace(Model.FeaturedImageUrl))
+        {
+            <img src="@Model.FeaturedImageUrl" alt="@Model.Heading" loading="lazy" decoding="async" data-image-fallback />
+        }
+        <span class="image-placeholder" aria-hidden="true"><span>&lt; / &gt;</span><small>THE BLOGGIE JOURNAL</small></span>
+    </a>
+    <div class="blog-card-body">
+        <div class="tag-list">
+            @if (Model.Tags is not null)
+            {
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="badge">@tag.Name</span>
+                }
+            }
+        </div>
+        <h3><a asp-controller="Blogs" asp-area="" asp-action="Index" asp-route-urlHandle="@Model.UrlHandle">@Model.Heading</a></h3>
+        <p class="blog-excerpt">@Model.ShortDescription</p>
+        <div class="card-meta"><span class="author-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(Model.Author) ? "B" : Model.Author.Substring(0, 1).ToUpperInvariant())</span><div><span class="author-name">@Model.Author</span><time datetime="@Model.PublishDate.ToString("yyyy-MM-dd")">@Model.PublishDate.ToString("MMM dd, yyyy")</time></div></div>
+        <a class="card-read-link" asp-controller="Blogs" asp-area="" asp-action="Index" asp-route-urlHandle="@Model.UrlHandle">Read story <span aria-hidden="true">↗</span></a>
+    </div>
+</article>

@@ -1,0 +1,26 @@
+@model Bloggie.Web.Models.ViewModels.AddTagRequest
+@{
+    ViewData["Title"] = "Add Tag";
+}
+<div class="page-banner">
+    <div class="container">
+        <div><span class="eyebrow">YOUR WORKSPACE</span><h1>Create a tag</h1><p>Make every detail count.</p></div>
+    </div>
+</div>
+<div class="container admin-content">
+    <form method="post" class="form-surface"><div asp-validation-summary="ModelOnly" role="alert"></div>
+        <div class="mb-3">
+            <label class="form-label" for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" asp-for="Name" required/> 
+            <span class="text-danger" asp-validation-for="Name"> </span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="displayName">Display Name</label>
+            <input type="text" class="form-control" id="displayName" asp-for="DisplayName" required />
+            <span class="text-danger" asp-validation-for="DisplayName"> </span>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>

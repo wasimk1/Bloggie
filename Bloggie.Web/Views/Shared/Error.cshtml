@@ -1,0 +1,8 @@
+@model ErrorViewModel
+@{ ViewData["Title"] = "Something went wrong"; }
+<div class="container content-page"><div class="empty-state"><span class="empty-icon" aria-hidden="true">!</span><h1>Something went wrong.</h1><p>We couldn't complete your request. Please try again in a moment.</p>
+@if (Model.ShowRequestId)
+{
+    <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+}
+<a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Back to Bloggie</a></div></div>

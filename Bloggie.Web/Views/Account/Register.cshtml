@@ -1,0 +1,44 @@
+@model Bloggie.Web.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Join Bloggie";
+}
+<div class="container">
+    <div class="auth-shell">
+        <aside class="auth-story">
+            <span class="eyebrow">A HOME FOR CURIOUS MINDS</span>
+            <h2>Ideas are better<br />when we share them.</h2>
+            <p>Explore the world of development, find your next inspiration, and be part of the conversation.</p>
+            <span class="auth-art" aria-hidden="true">✳</span>
+        </aside>
+        <section class="auth-form">
+            <span class="eyebrow">YOUR NEXT CHAPTER</span>
+            <h1>Join the conversation.</h1>
+            <p>Create your Bloggie account to get started.</p>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" role="alert"></div>
+                <div class="mb-3">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" class="form-control" asp-for="Username" autocomplete="username" placeholder="Your username" required />
+                    <span class="text-danger" asp-validation-for="Username"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-control" asp-for="Email" autocomplete="email" placeholder="you@example.com" required />
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" asp-for="Password" autocomplete="new-password" required aria-describedby="password-help" />
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                    <div class="form-text" id="password-help">At least 6 characters, with uppercase and lowercase letters, a number, and a special character.</div>
+                </div>
+                <div class="mt-4"><button type="submit" class="btn btn-primary" asp-action="Register" asp-controller="Account">Create account <span aria-hidden="true">↗</span></button></div>
+                
+            </form>
+            <div class="auth-switch">Already part of Bloggie? <a asp-controller="Account" asp-action="Login">Login</a></div>
+        </section>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

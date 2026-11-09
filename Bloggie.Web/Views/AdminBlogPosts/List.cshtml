@@ -1,0 +1,67 @@
+@model List<Bloggie.Web.Models.Domain.BlogPost>
+@{
+    ViewData["Title"] = "All Blog Post";
+}
+
+    <div class="page-banner">
+        <div class="container">
+            <div><span class="eyebrow">YOUR WORKSPACE</span><h1>Your stories</h1><p>A home for everything you have written. Manage and refine your posts.</p></div><a class="btn btn-primary" asp-controller="AdminBlogPosts" asp-action="Add">Write a post <span aria-hidden="true">+</span></a>
+        </div>
+    </div>
+
+    <div class="container admin-content">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive" role="region" aria-label="Manage records" tabindex="0"><table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Heading</th>
+                        <th>Page Title</th>
+                        @* <th>Content</th>
+                        <th>Short Description</th>
+                        <th>Url Handle</th>
+                        <th>Featured Image Url</th>*@
+                        <th>Publish Date</th> 
+                        <th>Author</th>
+                        <th>Visible</th>
+                        <th>Tags</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var items in Model)
+                    {
+                        <tr>
+                            <td>@items.Id</td>
+                            <td>@items.Heading</td>
+                            <td>@items.PageTitle</td>
+                            @* <td>@items.Content</td>
+                            <td>@items.ShortDescription</td>
+                            <td>@items.UrlHandle</td>
+                            <td>@items.FeaturedImageUrl</td> *@
+                            <td>@items.PublishDate</td>
+                            <td>@items.Author</td>
+                            <td>@items.Visible</td>
+                            <td>
+                                <div>
+                                    @foreach (var tags  in items.Tags)
+                                    {
+                                        <span class="badge bg-secondary me-1">@tags.Name</span>
+                                    }
+                                </div>
+                            </td>
+                            <td><a class="btn btn-warning" asp-controller="AdminBlogPosts" asp-action="Edit" asp-route-Id="@items.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table></div>
+        }
+        else
+        {
+            <div class="empty-state"><span class="empty-icon" aria-hidden="true">✎</span><h3>Your first story is waiting.</h3><p>Share an idea, a lesson, or something you have built.</p><a class="btn btn-primary" asp-controller="AdminBlogPosts" asp-action="Add">Write a post</a></div>
+        } 
+    </div>
